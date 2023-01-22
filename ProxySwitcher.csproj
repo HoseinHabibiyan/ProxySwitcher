@@ -7,6 +7,7 @@
 	  <ToolCommandName>proxysw</ToolCommandName>
 	  <PackageOutputPath>./nupkg</PackageOutputPath>
 	  <Authors>github.com/HoseinHabibiyan/ProxySwitcher</Authors>
+	  <RepositoryUrl>https://github.com/HoseinHabibiyan/ProxySwitcher</RepositoryUrl>
 	  <Version>1.0.0</Version>
   </PropertyGroup>
 
