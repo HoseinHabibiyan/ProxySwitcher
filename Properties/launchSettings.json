@@ -2,7 +2,7 @@
   "profiles": {
     "ProxySwitcher": {
       "commandName": "Project",
-      "commandLineArgs": "-c on"
+      "commandLineArgs": "-s"
     }
   }
 }

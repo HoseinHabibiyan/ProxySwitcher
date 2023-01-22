@@ -10,9 +10,6 @@ class Program
 {
     public class Options
     {
-        [Option('s', "show status", Required = false, HelpText = "show status of proxy")]
-        public bool ShowStatus { get; set; }
-
         [Option('c', "change status", Required = false, HelpText = "change status of proxy (on/off)")]
         public string ChangeStatus { get; set; }
 
@@ -50,7 +47,6 @@ class Program
                                    Off();
                                    break;
                            }
-                           ShowStatus();
                        }
 
                        if (p.Host != null)
@@ -63,10 +59,7 @@ class Program
                            SetPort(p.Port);
                        }
 
-                       if (p.ShowStatus)
-                       {
-                           ShowStatus();
-                       }
+                       ShowStatus();
 
                    }).WithNotParsed(err => DisplayHelp(parserResult, err));
     }
@@ -219,5 +212,7 @@ class Program
             return h;
         }, _ => _);
         AnsiConsole.MarkupLine($"[yellow]{helpText}[/]");
+
+        ShowStatus();
     }
 }
