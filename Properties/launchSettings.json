@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ProxySwitcher": {
+      "commandName": "Project",
+      "commandLineArgs": "-c on"
+    }
+  }
+}

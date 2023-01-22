@@ -1,2 +1,3 @@
 # ProxySwitcher
-Tool for manage and rewrite Windows proxy config
+Tool for manage and rewrite windows proxy config
+
