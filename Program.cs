@@ -174,15 +174,29 @@ class Program
             }
             AnsiConsole.MarkupLine($"[yellow]Status[/] {status}");
 
-
-            var hostObj = Key.GetValue(_proxyServerKey);
-            string host = hostObj != null ? hostObj.ToString() : "";
-            AnsiConsole.MarkupLine($"[yellow]Host {host.Split(":")[0]}[/]");
-
-            if (host.Split(":").Length > 1)
+            string host = null;
+            string port;
+            var valueObj = Key.GetValue(_proxyServerKey);
+            string strValue = "";
+            if (valueObj != null)
             {
-                AnsiConsole.MarkupLine($"[yellow]Port {host.Split(":")[1]}[/]");
+                strValue = valueObj.ToString();
+                host = strValue.Split(":")[0];
             }
+
+            if (string.IsNullOrWhiteSpace(host))
+            {
+                host = "[red]is empty[/]";
+            }
+
+            AnsiConsole.MarkupLine($"[yellow]Host {host}[/]");
+
+            if (strValue.Split(":").Length > 1)
+                port = strValue.Split(":")[1];
+            else
+                port = "[red]is empty[/]";
+
+            AnsiConsole.MarkupLine($"[yellow]Port {port}[/]");
         }
         Key.Close();
     }
@@ -200,7 +214,7 @@ class Program
     /// </summary>
     static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
     {
-        string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        string version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
         AnsiConsole.Write(
           new FigletText($"Proxy Switcher").Centered()
               .Color(Color.Red));
@@ -224,7 +238,7 @@ class Program
     /// <param name="args"></param>
     static void Menu(ref string[] args)
     {
-        string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        string version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
         AnsiConsole.MarkupLine($"[yellow]ProxySwitcher {version}[/]");
         Console.WriteLine();
         ShowStatus();
@@ -241,6 +255,8 @@ class Program
                 "Help",
                 "Exit"
             }));
+
+        Console.Clear();
 
         switch (choice)
         {
@@ -259,11 +275,9 @@ class Program
                 SetPort(port);
                 break;
             case "Help":
-                Console.Clear();
-                args = new []{ "--help" };
+                args = new[] { "--help" };
                 break;
             case "Exit":
-                Console.Clear();
                 Environment.Exit(0);
                 break;
         }
