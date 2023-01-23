@@ -4,31 +4,16 @@
     <OutputType>Exe</OutputType>
 	  <TargetFrameworks>net6.0</TargetFrameworks>
 	  <PackAsTool>true</PackAsTool>
-	  <ToolCommandName>proxysw</ToolCommandName>
+	  <ToolCommandName>psw</ToolCommandName>
 	  <PackageOutputPath>./nupkg</PackageOutputPath>
 	  <Authors>github.com/HoseinHabibiyan/ProxySwitcher</Authors>
 	  <RepositoryUrl>https://github.com/HoseinHabibiyan/ProxySwitcher</RepositoryUrl>
-	  <Version>1.0.0</Version>
+	  <Version>1.0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Spectre.Console" Version="0.46.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

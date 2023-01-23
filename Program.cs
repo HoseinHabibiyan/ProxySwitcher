@@ -5,6 +5,7 @@ using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 class Program
 {
@@ -28,11 +29,11 @@ class Program
             Console.ReadKey();
         }
 
+        if (!args.Any())
+            Menu(ref args);
+
         var parser = new CommandLine.Parser(with => { with.AutoHelp = false; with.AutoVersion = false; });
         var parserResult = parser.ParseArguments<Options>(args);
-
-        if (!args.Any())
-            DisplayHelp(parserResult, null);
 
         parserResult.WithParsed(p =>
                    {
@@ -199,20 +200,64 @@ class Program
     /// </summary>
     static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
     {
+        string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         AnsiConsole.Write(
-          new FigletText("Proxy Switcher").Centered()
+          new FigletText($"Proxy Switcher").Centered()
               .Color(Color.Red));
 
         var helpText = HelpText.AutoBuild(result, h =>
         {
             h.AdditionalNewLineAfterOption = false;
             h.AutoVersion = false;
-            h.Heading = "ProxySwitcher help";
+            h.Heading = $"ProxySwitcher {version}";
             h.Copyright = "Copyright (c) github.com/HoseinHabibiyan/ProxySwitcher";
             return h;
         }, _ => _);
         AnsiConsole.MarkupLine($"[yellow]{helpText}[/]");
 
         ShowStatus();
+    }
+
+    /// <summary>
+    /// Display menu
+    /// </summary>
+    /// <param name="args"></param>
+    static void Menu(ref string[] args)
+    {
+        string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        AnsiConsole.MarkupLine($"[yellow]ProxySwitcher {version}[/]");
+        string choice = AnsiConsole.Prompt(
+        new SelectionPrompt<string>()
+        .HighlightStyle(new Style(Color.Yellow))
+            .Title("[yellow]Select your choice[/]")
+            .AddChoices(new[] {
+                "Proxy On",
+                "Proxy Off",
+                "Change host url",
+                "Change port",
+                "Help"
+            }));
+
+        switch (choice)
+        {
+            case "Proxy On":
+                On();
+                break;
+            case "Proxy Off":
+                Off();
+                break;
+            case "Change host url":
+                string host = AnsiConsole.Ask<string>("[yellow]Enter your host:[/]");
+                SetHost(host);
+                break;
+            case "Change port":
+                string port = AnsiConsole.Ask<string>("[yellow]Enter your port:[/]");
+                SetPort(port);
+                break;
+            case "Help":
+                Console.Clear();
+                args = new []{ "--help" };
+                break;
+        }
     }
 }
