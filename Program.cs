@@ -226,16 +226,20 @@ class Program
     {
         string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         AnsiConsole.MarkupLine($"[yellow]ProxySwitcher {version}[/]");
+        Console.WriteLine();
+        ShowStatus();
+        Console.WriteLine();
+        AnsiConsole.MarkupLine("[yellow]Menu[/]");
         string choice = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
         .HighlightStyle(new Style(Color.Yellow))
-            .Title("[yellow]Select your choice[/]")
             .AddChoices(new[] {
                 "Proxy On",
                 "Proxy Off",
                 "Change host url",
                 "Change port",
-                "Help"
+                "Help",
+                "Exit"
             }));
 
         switch (choice)
@@ -258,6 +262,11 @@ class Program
                 Console.Clear();
                 args = new []{ "--help" };
                 break;
+            case "Exit":
+                Console.Clear();
+                Environment.Exit(0);
+                break;
         }
+
     }
 }
