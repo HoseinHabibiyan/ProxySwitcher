@@ -1,26 +1,10 @@
-﻿using CommandLine.Text;
-using CommandLine;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Spectre.Console;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 class Program
 {
-    public class Options
-    {
-        [Option('c', "change status", Required = false, HelpText = "change status of proxy (on/off)")]
-        public string ChangeStatus { get; set; }
-
-        [Option('h', "host", Required = false, HelpText = "Set proxy host")]
-        public string Host { get; set; }
-
-        [Option('p', "port", Required = false, HelpText = "Set proxy port")]
-        public string Port { get; set; }
-    }
-
     static void Main(string[] args)
     {
         if (!OperatingSystem.IsWindows())
@@ -29,40 +13,7 @@ class Program
             Console.ReadKey();
         }
 
-        if (!args.Any())
-            Menu(ref args);
-
-        var parser = new CommandLine.Parser(with => { with.AutoHelp = false; with.AutoVersion = false; });
-        var parserResult = parser.ParseArguments<Options>(args);
-
-        parserResult.WithParsed(p =>
-                   {
-                       if (!string.IsNullOrWhiteSpace(p.ChangeStatus))
-                       {
-                           switch (p.ChangeStatus.ToLower().Trim())
-                           {
-                               case "on":
-                                   On();
-                                   break;
-                               case "off":
-                                   Off();
-                                   break;
-                           }
-                       }
-
-                       if (p.Host != null)
-                       {
-                           SetHost(p.Host);
-                       }
-
-                       if (p.Port != null)
-                       {
-                           SetPort(p.Port);
-                       }
-
-                       ShowStatus();
-
-                   }).WithNotParsed(err => DisplayHelp(parserResult, err));
+        Menu();
     }
 
     /// <summary>
@@ -210,33 +161,10 @@ class Program
     }
 
     /// <summary>
-    /// Display help
-    /// </summary>
-    static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
-    {
-        string version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
-        AnsiConsole.Write(
-          new FigletText($"Proxy Switcher").Centered()
-              .Color(Color.Red));
-
-        var helpText = HelpText.AutoBuild(result, h =>
-        {
-            h.AdditionalNewLineAfterOption = false;
-            h.AutoVersion = false;
-            h.Heading = $"ProxySwitcher {version}";
-            h.Copyright = "Copyright (c) github.com/HoseinHabibiyan/ProxySwitcher";
-            return h;
-        }, _ => _);
-        AnsiConsole.MarkupLine($"[yellow]{helpText}[/]");
-
-        ShowStatus();
-    }
-
-    /// <summary>
     /// Display menu
     /// </summary>
     /// <param name="args"></param>
-    static void Menu(ref string[] args)
+    static void Menu()
     {
         string version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
         AnsiConsole.MarkupLine($"[yellow]ProxySwitcher {version}[/]");
@@ -274,13 +202,9 @@ class Program
                 string port = AnsiConsole.Ask<string>("[yellow]Enter your port:[/]");
                 SetPort(port);
                 break;
-            case "Help":
-                args = new[] { "--help" };
-                break;
             case "Exit":
                 Environment.Exit(0);
                 break;
         }
-
     }
 }
