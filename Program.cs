@@ -1,6 +1,9 @@
 ﻿using Microsoft.Win32;
 using Spectre.Console;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 
 class Program
@@ -14,6 +17,7 @@ class Program
         }
 
         Menu();
+
     }
 
     /// <summary>
@@ -21,6 +25,7 @@ class Program
     /// </summary>
     const string _proxyServerKey = "ProxyServer";
     const string _proxyEnableKey = "ProxyEnable";
+    static string _configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini");
 
     /// <summary>
     /// Set proxy one
@@ -75,7 +80,7 @@ class Program
         var arr = value.ToString().Split(':');
         string port = arr.Length > 1 ? arr[1] : "";
 
-        Store(host, port);
+        SetToRegistry(host, port);
     }
 
     /// <summary>
@@ -87,13 +92,13 @@ class Program
         var arr = value.ToString().Split(':');
         string host = arr.Length > 0 ? arr[0] : "";
 
-        Store(host, port);
+        SetToRegistry(host, port);
     }
 
     /// <summary>
     /// Store proxy changes
     /// </summary>
-    static void Store(string host, string port)
+    static void SetToRegistry(string host, string port)
     {
         RegistryKey Key = GetRegKey();
 
@@ -161,13 +166,96 @@ class Program
     }
 
     /// <summary>
+    /// Store default config
+    /// </summary>
+    static void DefineDefault()
+    {
+        var config = ReadConfig();
+
+        foreach (var item in config)
+        {
+            AnsiConsole.MarkupLine($"[yellow]{item.Key} {item.Value}[/]");
+        }
+        Console.WriteLine();
+
+        string host = AnsiConsole.Ask<string>("[yellow]Enter your host:[/]");
+        string port = AnsiConsole.Ask<string>("[yellow]Enter your port:[/]");
+
+        StoreConfig(new Dictionary<string, string>
+        {
+            { "default host", host },
+            { "default port", port }
+        });
+    }
+
+    /// <summary>
+    /// Set proxy from default config
+    /// </summary>
+    static void SetFromDefaultConfig()
+    {
+        var config = ReadConfig();
+
+        if (!config.Any())
+        {
+            AnsiConsole.MarkupLine($"[red]Default host and port is not set[/]");
+            AnsiConsole.MarkupLine($"[yellow]Press any key to back...[/]");
+            Console.ReadKey();
+            return;
+        }
+
+        if (config["default host"] != null)
+        {
+            SetHost(config["default host"]);
+        }
+
+        if (config["default port"] != null)
+        {
+            SetPort(config["default port"]);
+        }
+
+        ShowStatus();
+    }
+
+    /// <summary>
+    /// Store config to file
+    /// </summary>
+    static void StoreConfig(Dictionary<string, string> input)
+    {
+        var config = ReadConfig();
+
+        foreach (var item in input)
+        {
+            config[item.Key] = item.Value;
+        }
+
+        File.WriteAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.ini"), config.Select(kvp => kvp.Key + "=" + kvp.Value).ToArray());
+    }
+
+    /// <summary>
+    /// Read from config file
+    /// </summary>
+    static Dictionary<string, string> ReadConfig()
+    {
+        if (!File.Exists(_configPath)) return new Dictionary<string, string>();
+        string[] config = File.ReadAllLines(_configPath);
+        var dict = config.Select(l => l.Split('=')).ToDictionary(c => c[0], c => c[1]);
+        return dict;
+    }
+
+    /// <summary>
     /// Display menu
     /// </summary>
-    /// <param name="args"></param>
     static void Menu()
     {
+        Console.Clear();
+        AnsiConsole.Write(
+         new FigletText($"Proxy Switcher")
+         .Centered()
+         .Color(Color.DeepSkyBlue3));
+
         string version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
-        AnsiConsole.MarkupLine($"[yellow]ProxySwitcher {version}[/]");
+        AnsiConsole.MarkupLine($"[DeepSkyBlue3]v{version}[/]");
+        AnsiConsole.MarkupLine($"[DeepSkyBlue3]github.com/HoseinHabibiyan/ProxySwitcher[/]");
         Console.WriteLine();
         ShowStatus();
         Console.WriteLine();
@@ -178,9 +266,10 @@ class Program
             .AddChoices(new[] {
                 "Proxy On",
                 "Proxy Off",
+                "Set from default config",
+                "Define default",
                 "Change host url",
                 "Change port",
-                "Help",
                 "Exit"
             }));
 
@@ -194,6 +283,12 @@ class Program
             case "Proxy Off":
                 Off();
                 break;
+            case "Set from default config":
+                SetFromDefaultConfig();
+                break;
+            case "Define default":
+                DefineDefault();
+                break;
             case "Change host url":
                 string host = AnsiConsole.Ask<string>("[yellow]Enter your host:[/]");
                 SetHost(host);
@@ -206,5 +301,6 @@ class Program
                 Environment.Exit(0);
                 break;
         }
+        Menu();
     }
 }
