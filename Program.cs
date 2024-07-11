@@ -16,8 +16,10 @@ class Program
             Console.ReadKey();
         }
 
-        Menu();
+        Console.CancelKeyPress += new ConsoleCancelEventHandler(OnExit);
+        AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnExit);
 
+        Menu();
     }
 
     /// <summary>
@@ -302,5 +304,13 @@ class Program
                 break;
         }
         Menu();
+    }
+
+    /// <summary>
+    /// On exit set proxy off
+    /// </summary>
+    static void OnExit(object sender, EventArgs e)
+    {
+        Off();
     }
 }
