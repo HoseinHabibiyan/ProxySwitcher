@@ -8,7 +8,7 @@
 	  <PackageOutputPath>./nupkg</PackageOutputPath>
 	  <Authors>github.com/HoseinHabibiyan/ProxySwitcher</Authors>
 	  <RepositoryUrl>https://github.com/HoseinHabibiyan/ProxySwitcher</RepositoryUrl>
-	  <Version>2.1.1</Version>
+	  <Version>2.1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

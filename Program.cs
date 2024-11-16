@@ -19,8 +19,8 @@ class Program
         Console.CancelKeyPress += OnExit;
         AppDomain.CurrentDomain.ProcessExit += OnExit;
 
-        Menu();
         On();
+        Menu();
     }
 
     /// <summary>
@@ -35,7 +35,9 @@ class Program
     /// </summary>
     static void On()
     {
-        SetFromDefaultConfig();
+        if(ReadConfig().Any())
+            SetFromDefaultConfig();
+     
         RegistryKey Key = GetRegKey();
         if (Key != null)
         {
