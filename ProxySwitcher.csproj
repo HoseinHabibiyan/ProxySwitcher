@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	  <TargetFrameworks>net8.0</TargetFrameworks>
+	  <TargetFramework>net8.0</TargetFramework>
 	  <PackAsTool>true</PackAsTool>
 	  <ToolCommandName>psw</ToolCommandName>
 	  <PackageOutputPath>./nupkg</PackageOutputPath>
 	  <Authors>github.com/HoseinHabibiyan/ProxySwitcher</Authors>
 	  <RepositoryUrl>https://github.com/HoseinHabibiyan/ProxySwitcher</RepositoryUrl>
-	  <Version>2.1.0</Version>
+	  <Version>2.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

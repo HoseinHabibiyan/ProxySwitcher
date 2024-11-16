@@ -16,10 +16,11 @@ class Program
             Console.ReadKey();
         }
 
-        Console.CancelKeyPress += new ConsoleCancelEventHandler(OnExit);
-        AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnExit);
+        Console.CancelKeyPress += OnExit;
+        AppDomain.CurrentDomain.ProcessExit += OnExit;
 
         Menu();
+        On();
     }
 
     /// <summary>
@@ -34,6 +35,7 @@ class Program
     /// </summary>
     static void On()
     {
+        SetFromDefaultConfig();
         RegistryKey Key = GetRegKey();
         if (Key != null)
         {
